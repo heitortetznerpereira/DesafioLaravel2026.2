@@ -18,6 +18,13 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->boolean('is_admin')->default(false);
+            $table->string('phone_number');
+            $table->string('cpf');
+            $table->date('birth_date');
+            $table->string('photo_path')->nullable();
+            $table->decimal('balance', 10, 2)->default(0.00);
+            $table->foreignId('creator_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
 
