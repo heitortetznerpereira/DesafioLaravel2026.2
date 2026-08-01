@@ -1,46 +1,38 @@
-<form
-    method="GET"
-    action="{{ route('home') }}"
-    class="flex gap-4 mb-8"
->
+<form method="GET" action="{{ route('home') }}"
+          class="flex flex-col md:flex-row gap-4 mb-8">
 
-    <input
-        type="text"
-        name="search"
-        value="{{ request('search') }}"
-        placeholder="Pesquisar produto..."
-        class="flex-1 border rounded-lg px-4 py-2"
-    >
+        <input
+            type="text"
+            name="search"
+            value="{{ request('search') }}"
+            placeholder="Pesquisar produtos..."
+            class="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        >
 
-    <select
-        name="category"
-        class="border rounded-lg px-4 py-2 pr-10"
-        onchange="this.form.submit()"
-    >
+        <select
+            name="category"
+            class="w-full md:w-64 rounded-lg border border-gray-300 px-4 py-3"
+        >
 
-        <option value="">
-            Todas as categorias
-        </option>
+            <option value="">Todas as categorias</option>
 
-        @foreach($categories as $category)
+            @foreach($categories as $category)
 
-            <option
-                value="{{ $category->id }}"
-                @selected(request('category') == $category->id)
-            >
+                <option
+                    value="{{ $category->id }}"
+                    @selected(request('category') == $category->id)
+                >
+                    {{ $category->name }}
+                </option>
 
-                {{ $category->name }}
+            @endforeach
 
-            </option>
+        </select>
 
-        @endforeach
+        <button
+            class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-3 transition"
+        >
+            Buscar
+        </button>
 
-    </select>
-
-    <button
-        class="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-lg"
-    >
-        Buscar
-    </button>
-
-</form>
+    </form>
