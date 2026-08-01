@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(50)->create();
-        // Como product chama User::factory() para o campo creator_id, terá mais usuários.
+        Category::factory(10)->create();
         Product::factory(50)->create();
 
     }

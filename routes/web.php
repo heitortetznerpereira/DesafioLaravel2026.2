@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get("/", [HomeController::class, "index"])->name("home");
 
+Route::get("/search", [HomeController::class, "search"])->name("products.search");
+
 Route::get("/welcome", function () {
     return view("welcome");
 })->name("welcome");
