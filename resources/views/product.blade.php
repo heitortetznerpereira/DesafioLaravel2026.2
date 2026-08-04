@@ -20,43 +20,65 @@
 
         <div class="flex flex-col">
 
-            <span class="text-sm text-gray-500 uppercase">
-
-                {{ $product->category->name }}
-
-            </span>
-
-            <h1 class="text-4xl font-bold text-gray-800 mt-2">
-
+            <h1 class="text-4xl font-bold text-gray-800">
                 {{ $product->name }}
-
             </h1>
 
             <p class="text-4xl font-bold text-green-600 mt-6">
-
                 R$ {{ number_format($product->price, 2, ',', '.') }}
+            </p>
 
+            <div class="mt-6 space-y-2">
+
+                <p>
+                    <span class="font-semibold">Quantidade:</span>
+                    {{ $product->quantity }}
+                </p>
+
+                <p>
+                    <span class="font-semibold">Categoria:</span>
+                    {{ $product->category->name }}
+                </p>
+
+            </div>
+
+            <hr class="my-6">
+
+            <h2 class="text-xl font-semibold">
+                Descrição
+            </h2>
+
+            <p class="text-gray-600 mt-3 leading-relaxed">
+                {{ $product->description }}
             </p>
 
             <hr class="my-6">
 
             <h2 class="text-xl font-semibold">
-
-                Descrição
-
+                Anunciante
             </h2>
 
-            <p class="text-gray-600 mt-3 leading-relaxed">
+            <div class="mt-3 space-y-2">
 
-                {{ $product->description }}
+                <p>
+                    <span class="font-semibold">Nome:</span>
+                    {{ $product->creator->name }}
+                </p>
 
-            </p>
+                <p>
+                    <span class="font-semibold">Telefone:</span>
+                    {{ $product->creator->phone_number }}
+                </p>
 
-            <button
-                class="mt-10 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-xl transition"
-            >
-                Comprar
-            </button>
+            </div>
+
+            @if(!Auth::user()->is_admin)
+                <button
+                    class="mt-10 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-xl transition"
+                >
+                    Comprar
+                </button>
+            @endif
 
         </div>
 
