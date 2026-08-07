@@ -6,6 +6,8 @@ use App\Models\Sale;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\SalesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SaleController extends Controller
 {
@@ -61,5 +63,17 @@ class SaleController extends Controller
         );
 
         return $pdf->stream('relatorio-vendas.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        if (!Auth::user()->is_admin) {
+            abort(403);
+        }
+
+        return Excel::download(
+            new SalesExport($request),
+            'relatorio-vendas.xlsx'
+        );
     }
 }

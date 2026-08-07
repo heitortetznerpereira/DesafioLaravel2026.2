@@ -58,12 +58,18 @@
                     Gerar PDF
                 </a>
 
+                @if(Auth::user()->is_admin)
+
                 <a
-                    href="{{ route('sales.index') }}"
-                    class="bg-gray-500 text-white px-5 py-2 rounded-lg"
+                    href="{{ route('sales.xlsx', request()->query()) }}"
+                    class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700"
                 >
-                    Limpar
+
+                    Gerar XLSX
+
                 </a>
+
+                @endif
 
             </form>
 
