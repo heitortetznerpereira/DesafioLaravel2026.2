@@ -20,7 +20,7 @@
             R$ {{ number_format($product->price, 2, ',', '.') }}
         </p>
 
-        <a href="{{ route('product.show', $product) }}"
+        <a href="{{ route('products.show', $product) }}"
             class="mt-6 block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
         >
             Ver Produto

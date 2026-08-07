@@ -17,6 +17,11 @@ class Product extends Model
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'creator_id');
+        return $this->belongsTo(User::class, "creator_id");
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
     }
 }
