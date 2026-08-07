@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/welcome", function () {
@@ -28,14 +29,22 @@ Route::middleware("auth")->group(function () {
 
     Route::get("/", [HomeController::class, "index"])->name("home");
 
-    Route::get("/individual_product/{product}", [ProductController::class, "show"])->name(
-        "product.show",
+    Route::get("/individual_product/{product}", [
+        ProductController::class,
+        "show",
+    ])->name("product.show");
+
+    Route::resource("products", ProductController::class);
+
+    Route::get("/sales", [SaleController::class, "index"])->name("sales.index");
+
+    Route::get("/sales/pdf", [SaleController::class, "exportPdf"])->name(
+        "sales.pdf",
     );
 
-    Route::resource('products', ProductController::class);
-
-    Route::get('/sales', [SaleController::class, 'index'])
-            ->name('sales.index');
+    Route::get("/sales/xlsx", [SaleController::class, "exportExcel"])->name(
+        "sales.xlsx",
+    );
 });
 
 require __DIR__ . "/auth.php";

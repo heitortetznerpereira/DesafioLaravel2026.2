@@ -53,11 +53,11 @@ class User extends Authenticatable
 
     public function purchases()
     {
-        return $this->hasMany(Sale::class, 'buyer_id');
+        return $this->hasMany(Sale::class, "buyer_id");
     }
 
     public function sales()
     {
-        return $this->hasMany(Sale::class, 'seller_id');
+        return $this->hasMany(Sale::class, "seller_id");
     }
 }
