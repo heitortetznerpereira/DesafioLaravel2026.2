@@ -33,6 +33,9 @@ Route::middleware("auth")->group(function () {
     );
 
     Route::resource('products', ProductController::class);
+
+    Route::get('/sales', [SaleController::class, 'index'])
+            ->name('sales.index');
 });
 
 require __DIR__ . "/auth.php";
