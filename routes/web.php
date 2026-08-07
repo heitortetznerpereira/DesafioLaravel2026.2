@@ -45,6 +45,7 @@ Route::middleware("auth")->group(function () {
     Route::get("/sales/xlsx", [SaleController::class, "exportExcel"])->name(
         "sales.xlsx",
     );
+
 });
 
 require __DIR__ . "/auth.php";

@@ -51,6 +51,14 @@
                 </button>
 
                 <a
+                    href="{{ route('sales.pdf', request()->query()) }}"
+                    target="_blank"
+                    class="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700"
+                >
+                    Gerar PDF
+                </a>
+
+                <a
                     href="{{ route('sales.index') }}"
                     class="bg-gray-500 text-white px-5 py-2 rounded-lg"
                 >
