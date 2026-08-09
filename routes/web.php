@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminMailController;
 
 Route::get("/welcome", function () {
     return view("welcome");
@@ -46,6 +47,13 @@ Route::middleware("auth")->group(function () {
         "sales.xlsx",
     );
 
+    Route::get("/admin/mail", [AdminMailController::class, "create"])->name(
+        "admin.mail.create",
+    );
+
+    Route::post("/admin/mail", [AdminMailController::class, "store"])->name(
+        "admin.mail.store",
+    );
 });
 
 require __DIR__ . "/auth.php";
