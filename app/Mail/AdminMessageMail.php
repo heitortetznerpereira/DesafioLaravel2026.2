@@ -13,15 +13,15 @@ class AdminMessageMail extends Mailable
     use Queueable, SerializesModels;
 
     public function __construct(
-        public string $subject,
-        public string $message,
+        public string $emailSubject,
+        public string $messageContent,
     ) {
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->subject,
+            subject: $this->emailSubject,
         );
     }
 
@@ -29,6 +29,10 @@ class AdminMessageMail extends Mailable
     {
         return new Content(
             view: 'emails.admin-message',
+            with: [
+                'subject' => $this->emailSubject,
+                'messageContent' => $this->messageContent,
+            ],
         );
     }
 }

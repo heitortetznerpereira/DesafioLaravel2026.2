@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-
     <title>{{ $subject }}</title>
 </head>
 
@@ -12,7 +11,7 @@
     <h1>{{ $subject }}</h1>
 
     <p>
-        {{ $message }}
+        {{ $messageContent }}
     </p>
 
 </body>
