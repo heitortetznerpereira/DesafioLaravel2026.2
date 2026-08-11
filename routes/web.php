@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminMailController;
+use App\Http\Controllers\UserController;
 
 Route::get("/welcome", function () {
     return view("welcome");
@@ -54,6 +55,8 @@ Route::middleware("auth")->group(function () {
     Route::post("/admin/mail", [AdminMailController::class, "store"])->name(
         "admin.mail.store",
     );
+
+    Route::resource("/users", UserController::class);
 });
 
 require __DIR__ . "/auth.php";
