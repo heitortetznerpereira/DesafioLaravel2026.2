@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('cep');
             $table->string('street');
             $table->string('number');
-            $table->string('complement');
+            $table->string('complement')->nullable();
             $table->string('neighborhood');
             $table->string('city');
             $table->string('state');
