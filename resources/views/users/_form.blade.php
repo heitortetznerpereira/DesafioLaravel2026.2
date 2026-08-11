@@ -9,7 +9,7 @@
         <input
             type="text"
             name="name"
-            value="{{ old('name', $product->name ?? '') }}"
+            value="{{ old('name', $user->name ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
@@ -17,14 +17,13 @@
 
     <div>
         <label class="block font-semibold mb-2">
-            Preço
+            Email
         </label>
 
         <input
-            type="number"
-            step="0.01"
-            name="price"
-            value="{{ old('price', $product->price ?? '') }}"
+            type="email"
+            name="email"
+            value="{{ old('email', $user->email?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
@@ -32,13 +31,13 @@
 
     <div>
         <label class="block font-semibold mb-2">
-            Quantidade
+            Senha
         </label>
 
         <input
-            type="number"
-            name="amount"
-            value="{{ old('amount', $product->amount ?? '') }}"
+            type="password"
+            name="password"
+            value="{{ old('password', $user->password ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
@@ -46,42 +45,30 @@
 
     <div>
         <label class="block font-semibold mb-2">
-            Categoria
+            CEP
         </label>
 
-        <select
-            name="category_id"
+        <input
+            type="text"
+            name="cep"
+            value="{{ old('cep', $user->cep ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
-
-            @foreach($categories as $category)
-
-                <option
-                    value="{{ $category->id }}"
-                    @selected(old('category_id', $product->category_id ?? '') == $category->id)
-                >
-
-                    {{ $category->name }}
-
-                </option>
-
-            @endforeach
-
-        </select>
     </div>
 
     <div>
         <label class="block font-semibold mb-2">
-            Descrição
+            Número
         </label>
 
-        <textarea
-            name="description"
-            rows="5"
+        <input
+            type="text"
+            name="number"
+            value="{{ old('number', $user->number ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
-        >{{ old('description', $product->description ?? '') }}</textarea>
+        >
     </div>
 
     <div>
@@ -91,16 +78,16 @@
 
         <input
             type="file"
-            name="image"
+            name="photo_path"
             class="w-full"
             accept="image/*"
         >
     </div>
 
-    @isset($product)
+    @isset($user)
 
         <img
-            src="{{ Storage::url($product->image_path) }}"
+            src="{{ Storage::url($user->image_path) }}"
             class="w-48 rounded-lg shadow"
         >
 

@@ -14,7 +14,7 @@
 
         @if(Auth::user()->is_admin)
         <a
-            href="{{ route('products.create') }}"
+            href="{{ route('users.create') }}"
             class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
         >
             Novo Usuário

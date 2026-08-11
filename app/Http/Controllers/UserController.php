@@ -23,15 +23,12 @@ class UserController extends Controller
         ]);
     }
 
-    /*
     public function create()
     {
-        if (Auth::user()->is_admin) {
+        if (!Auth::user()->is_admin) {
             abort(403);
         }
-        return view("products.create", [
-            "categories" => Category::all(),
-        ]);
+        return view("users.create");
     }
 
     public function store(Request $request)
