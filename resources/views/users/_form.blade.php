@@ -340,3 +340,34 @@
 </fieldset>
 
 </div>
+
+<script>
+    const cepInput = document.getElementById('cep');
+
+    cepInput.addEventListener('blur', async () => {
+        const cep = cepInput.value.replace(/\D/g, '');
+
+        if (cep.length !== 8) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+
+            if (data.erro) {
+                alert('CEP não encontrado.');
+                return;
+            }
+
+            console.log(data)
+            document.getElementById('street').value = data.logradouro;
+            document.getElementById('neighborhood').value = data.bairro;
+            document.getElementById('city').value = data.localidade;
+            document.getElementById('state').value = data.estado;
+
+        } catch (error) {
+            console.error('Erro ao consultar o CEP:', error);
+        }
+    });
+</script>
