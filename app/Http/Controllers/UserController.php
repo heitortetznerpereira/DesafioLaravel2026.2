@@ -57,6 +57,15 @@ class UserController extends Controller
         return view("users.create");
     }
 
+    public function createAdmin()
+    {
+        if (!Auth::user()->is_admin) {
+            abort(403);
+        }
+
+        return view("admins.create");
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

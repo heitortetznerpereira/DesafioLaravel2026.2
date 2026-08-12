@@ -1,3 +1,4 @@
+<!--  TODO : adicionar pesquisa, pode apenas ver admins criados por si mesmo -->
 @extends('layouts.main')
 
 @section('title', 'Admins')
@@ -13,7 +14,7 @@
         </h1>
 
         <a
-            href="{{ route('users.create') }}"
+            href="{{ route('admins.create') }}"
             class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
         >
             Novo Admin
@@ -91,23 +92,23 @@
                             <div class="flex gap-2">
 
                                 <a
-                                    href="{{ route('users.show', $user) }}"
+                                    href="{{ route('admins.show', $user) }}"
                                     class="bg-green-600 text-white px-4 py-2 rounded"
                                 >
                                     Ver
                                 </a>
 
                                 <a
-                                    href="{{ route('users.edit', $user) }}"
+                                    href="{{ route('admins.edit', $user) }}"
                                     class="bg-yellow-500 text-white px-4 py-2 rounded"
                                 >
                                     Editar
                                 </a>
 
                                 <form
-                                    action="{{ route('users.destroy', $user) }}"
+                                    action="{{ route('admins.destroy', $user) }}"
                                     method="POST"
-                                    onsubmit="return confirm('Deseja excluir este usuário?')"
+                                    onsubmit="return confirm('Deseja excluir este admin?')"
                                 >
 
                                     @csrf

@@ -125,6 +125,7 @@
         >
     </div>
 
+    <input type="hidden" name="is_admin" value="true">
 
     {{-- Data de nascimento --}}
     <div>
