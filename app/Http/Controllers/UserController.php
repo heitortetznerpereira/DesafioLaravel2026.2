@@ -41,9 +41,15 @@ class UserController extends Controller
             abort(403);
         }
 
-        return view("users.show", [
-            "user" => $user,
-        ]);
+        if ($user->is_admin) {
+            return view("admins.show", [
+                "user" => $user,
+            ]);
+        } else {
+            return view("users.show", [
+                "user" => $user,
+            ]);
+        }
     }
 
     public function create()
@@ -69,13 +75,13 @@ class UserController extends Controller
             "birth_date" => ["required", "date"],
             "image" => ["nullable", "image", "max:2048"],
             "balance" => ["numeric", "min:0"],
-            "cep" => ["required", "string", "max:9"],
-            "street" => ["required", "string", "max:255"],
-            "number" => ["required", "string", "max:10"],
+            "cep" => ["required_if:is_admin,0", "string", "max:9"],
+            "street" => ["required_if:is_admin,0", "string", "max:255"],
+            "number" => ["required_if:is_admin,0", "string", "max:10"],
             "complement" => ["nullable", "string", "max:255"],
-            "neighborhood" => ["required", "string", "max:255"],
-            "city" => ["required", "string", "max:255"],
-            "state" => ["required", "string", "max:2"],
+            "neighborhood" => ["required_if:is_admin,0", "string", "max:255"],
+            "city" => ["required_if:is_admin,0", "string", "max:255"],
+            "state" => ["required_if:is_admin,0", "string", "max:2"],
         ]);
 
         $image = null;
@@ -97,20 +103,30 @@ class UserController extends Controller
                 "balance" => $validated["balance"] ?? 0,
             ]);
 
-            $user->address()->create([
-                "cep" => $validated["cep"],
-                "street" => $validated["street"],
-                "number" => $validated["number"],
-                "complement" => $validated["complement"] ?? null,
-                "neighborhood" => $validated["neighborhood"],
-                "city" => $validated["city"],
-                "state" => $validated["state"],
-            ]);
+            if (!$user->is_admin) {
+                $user->address()->create([
+                    "cep" => $validated["cep"],
+                    "street" => $validated["street"],
+                    "number" => $validated["number"],
+                    "complement" => $validated["complement"] ?? null,
+                    "neighborhood" => $validated["neighborhood"],
+                    "city" => $validated["city"],
+                    "state" => $validated["state"],
+                ]);
+            }
         });
 
-        return redirect()
-            ->route("users.index")
-            ->with("success", "Usuário criado com sucesso");
+        $user = User::where("email", $validated["email"])->first();
+
+        if ($user->is_admin) {
+            return redirect()
+                ->route("admins.index")
+                ->with("success", "Administrador criado com sucesso");
+        } else {
+            return redirect()
+                ->route("users.index")
+                ->with("success", "Usuário criado com sucesso");
+        }
     }
 
     public function edit(User $user)
@@ -119,9 +135,15 @@ class UserController extends Controller
             abort(403);
         }
 
-        return view("users.edit", [
-            "user" => $user,
-        ]);
+        if ($user->is_admin) {
+            return view("admins.edit", [
+                "user" => $user,
+            ]);
+        } else {
+            return view("users.edit", [
+                "user" => $user,
+            ]);
+        }
     }
 
     public function update(Request $request, User $user)
@@ -150,21 +172,19 @@ class UserController extends Controller
             "phone_number" => ["required", "string", "max:20"],
             "birth_date" => ["required", "date"],
 
-            // ADD THIS
             "image" => ["nullable", "image", "max:2048"],
 
             "balance" => ["numeric", "min:0"],
-            "cep" => ["required", "string", "max:8"],
-            "street" => ["required", "string", "max:255"],
-            "number" => ["required", "string", "max:10"],
+            "cep" => ["required_if:is_admin,0", "string", "max:8"],
+            "street" => ["required_if:is_admin,0", "string", "max:255"],
+            "number" => ["required_if:is_admin,0", "string", "max:10"],
             "complement" => ["nullable", "string", "max:255"],
-            "neighborhood" => ["required", "string", "max:255"],
-            "city" => ["required", "string", "max:255"],
-            "state" => ["required", "string", "max:255"],
+            "neighborhood" => ["required_if:is_admin,0", "string", "max:255"],
+            "city" => ["required_if:is_admin,0", "string", "max:255"],
+            "state" => ["required_if:is_admin,0", "string", "max:255"],
         ]);
 
         if ($request->hasFile("image")) {
-
             $validated["image"] = $request
                 ->file("image")
                 ->store("users", "public");
@@ -186,16 +206,24 @@ class UserController extends Controller
                 "balance" => $validated["balance"] ?? $user->balance,
             ]);
 
-            $user->address()->update([
-                "cep" => $validated["cep"],
-                "street" => $validated["street"],
-                "number" => $validated["number"],
-                "complement" => $validated["complement"] ?? null,
-                "neighborhood" => $validated["neighborhood"],
-                "city" => $validated["city"],
-                "state" => $validated["state"],
-            ]);
+            if (!$user->is_admin) {
+                $user->address()->update([
+                    "cep" => $validated["cep"],
+                    "street" => $validated["street"],
+                    "number" => $validated["number"],
+                    "complement" => $validated["complement"] ?? null,
+                    "neighborhood" => $validated["neighborhood"],
+                    "city" => $validated["city"],
+                    "state" => $validated["state"],
+                ]);
+            }
         });
+
+        if ($user->is_admin) {
+            return redirect()
+                ->route("admins.index")
+                ->with("success", "Administrador atualizado com sucesso");
+        }
 
         return redirect()
             ->route("users.index")
@@ -204,6 +232,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        $wasAdmin = $user->is_admin;
         if ($user->creator_id !== Auth::id() && !Auth::user()->is_admin) {
             abort(403);
         }
@@ -214,6 +243,12 @@ class UserController extends Controller
             $user->address()->delete();
             $user->delete();
         });
+
+        if ($wasAdmin) {
+            return redirect()
+                ->route("admins.index")
+                ->with("success", "Administrador excluído com sucesso");
+        }
 
         return redirect()
             ->route("users.index")
