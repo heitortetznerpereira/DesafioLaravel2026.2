@@ -58,7 +58,20 @@ Route::middleware("auth")->group(function () {
         "admin.mail.store",
     );
 
-    Route::resource("/users", UserController::class);
+    Route::get("/users", [UserController::class, 'index'])->name('users.index');
+    Route::get("/users/create", [UserController::class, 'create'])->name('users.create');
+    Route::post("/users/store", [UserController::class, 'store'])->name('users.store');
+    Route::get("/users/edit/{user}", [UserController::class, 'edit'])->name('users.edit');
+    Route::put("/users/update/{user}", [UserController::class, 'update'])->name('users.update');
+    Route::get("/users/show/{user}", [UserController::class, 'show'])->name('users.show');
+    Route::delete("/users/delete/{user}", [UserController::class, 'destroy'])->name('users.destroy');
+
+    Route::get("/admins", [UserController::class, 'admins'])->name('admins.index');
+    Route::get("/admins/create", [UserController::class, 'create'])->name('admins.create');
+    Route::post("/admins/store", [UserController::class, 'store'])->name('admins.store');
+    Route::get("/admins/edit/{user}", [UserController::class, 'edit'])->name('admins.edit');
+    Route::put("/admins/update/{user}", [UserController::class, 'update'])->name('admins.update');
+    Route::delete("/admins/delete/{user}", [UserController::class, 'destroy'])->name('admins.destroy');
 });
 
 require __DIR__ . "/auth.php";

@@ -23,6 +23,18 @@ class UserController extends Controller
         ]);
     }
 
+    public function admins()
+    {
+        if (!Auth::user()->is_admin) {
+            abort(403);
+        }
+        $users = User::where("is_admin", true)->paginate(10);
+
+        return view("admins.index", [
+            "users" => $users,
+        ]);
+    }
+
     public function show(User $user)
     {
         if ($user->id !== Auth::id() && !Auth::user()->is_admin) {
