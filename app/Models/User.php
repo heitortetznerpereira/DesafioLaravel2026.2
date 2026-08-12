@@ -24,6 +24,9 @@ class User extends Authenticatable
         "cpf",
         "phone_number",
         "birth_date",
+        "image",
+        "balance",
+        "is_admin",
     ];
 
     /**

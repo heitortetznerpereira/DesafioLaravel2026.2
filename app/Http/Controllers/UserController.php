@@ -23,6 +23,17 @@ class UserController extends Controller
         ]);
     }
 
+    public function show(User $user)
+    {
+        if ($user->id !== Auth::id() && !Auth::user()->is_admin) {
+            abort(403);
+        }
+
+        return view("users.show", [
+            "user" => $user,
+        ]);
+    }
+
     public function create()
     {
         return view("users.create");
@@ -126,8 +137,11 @@ class UserController extends Controller
             ],
             "phone_number" => ["required", "string", "max:20"],
             "birth_date" => ["required", "date"],
-            "balance" => ["numeric", "min:0"],
+
+            // ADD THIS
             "image" => ["nullable", "image", "max:2048"],
+
+            "balance" => ["numeric", "min:0"],
             "cep" => ["required", "string", "max:8"],
             "street" => ["required", "string", "max:255"],
             "number" => ["required", "string", "max:10"],
@@ -138,11 +152,11 @@ class UserController extends Controller
         ]);
 
         if ($request->hasFile("image")) {
-            Storage::disk("public")->delete($user->image_path);
 
             $validated["image"] = $request
                 ->file("image")
                 ->store("users", "public");
+            Storage::disk("public")->delete($user->image);
         }
 
         DB::transaction(function () use ($validated, $user) {
@@ -156,7 +170,7 @@ class UserController extends Controller
                 "cpf" => $validated["cpf"],
                 "phone_number" => $validated["phone_number"],
                 "birth_date" => $validated["birth_date"],
-                "image" => $validated["image"] ?? $user->image_path,
+                "image" => $validated["image"] ?? $user->image,
                 "balance" => $validated["balance"] ?? $user->balance,
             ]);
 

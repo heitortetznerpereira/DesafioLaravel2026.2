@@ -8,6 +8,13 @@
     </div>
 @endif
 
+
+
+@php
+    $readonly = $readonly ?? false;
+@endphp
+
+<fieldset @disabled($readonly)>
 <div class="space-y-6">
 
     {{-- Nome --}}
@@ -68,9 +75,13 @@
         >
 
         @isset($user)
+        @unless($readonly)
+
             <p class="text-sm text-gray-500 mt-1">
                 Deixe vazio para manter a senha atual.
             </p>
+
+            @endunless
         @endisset
     </div>
 
@@ -148,7 +159,7 @@
             id="cep"
             type="text"
             name="cep"
-            value="{{ old('cep', $user->cep ?? '') }}"
+            value="{{ old('cep', $user->address->cep ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
@@ -168,7 +179,7 @@
             id="street"
             type="text"
             name="street"
-            value="{{ old('street', $user->street ?? '') }}"
+            value="{{ old('street', $user->address->street ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
@@ -188,7 +199,7 @@
             id="number"
             type="text"
             name="number"
-            value="{{ old('number', $user->number ?? '') }}"
+            value="{{ old('number', $user->address->number ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
@@ -208,7 +219,7 @@
             id="complement"
             type="text"
             name="complement"
-            value="{{ old('complement', $user->complement ?? '') }}"
+            value="{{ old('complement', $user->address->complement ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
         >
     </div>
@@ -227,7 +238,7 @@
             id="neighborhood"
             type="text"
             name="neighborhood"
-            value="{{ old('neighborhood', $user->neighborhood ?? '') }}"
+            value="{{ old('neighborhood', $user->address->neighborhood ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
@@ -247,7 +258,7 @@
             id="city"
             type="text"
             name="city"
-            value="{{ old('city', $user->city ?? '') }}"
+            value="{{ old('city', $user->address->city ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
@@ -267,13 +278,13 @@
             id="state"
             type="text"
             name="state"
-            value="{{ old('state', $user->state ?? '') }}"
+            value="{{ old('state', $user->address->state ?? '') }}"
             class="w-full rounded-lg border px-4 py-2"
             required
         >
     </div>
 
-
+    @unless($readonly)
     {{-- Foto --}}
     <div>
         <label
@@ -292,6 +303,7 @@
         >
     </div>
 
+    @endunless
 
     {{-- Foto atual --}}
     @isset($user)
@@ -315,6 +327,8 @@
     @endisset
 
 
+
+    @unless($readonly)
     {{-- Botão --}}
     <button
         type="submit"
@@ -322,5 +336,7 @@
     >
         Salvar
     </button>
+    @endunless
+</fieldset>
 
 </div>
