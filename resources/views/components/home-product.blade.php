@@ -3,7 +3,7 @@
     <div class="aspect-square bg-gray-100">
 
         <img
-            src="{{ Storage::url($product->image_path) }}"
+            src="{{ Storage::url($product->image) }}"
             alt="{{ $product->name }}"
             class="w-full h-full object-cover"
         >

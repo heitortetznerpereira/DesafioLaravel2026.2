@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-
     public function index()
     {
         if (!Auth::user()->is_admin) {
@@ -33,14 +32,20 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             "name" => ["required", "string", "max:255"],
-            "email" => ["required", "string", "email", "max:255", "unique:users"],
+            "email" => [
+                "required",
+                "string",
+                "email",
+                "max:255",
+                "unique:users",
+            ],
             "password" => ["required", "string", "min:8"],
-            "is_admin" => ["required", "boolean"],
+            "is_admin" => ["boolean"],
             "cpf" => ["required", "string", "max:14", "unique:users"],
             "phone_number" => ["required", "string", "max:15"],
             "birth_date" => ["required", "date"],
             "image" => ["nullable", "image", "max:2048"],
-            "balance" => ["required", "numeric", "min:0"],
+            "balance" => ["numeric", "min:0"],
             "cep" => ["required", "string", "max:9"],
             "street" => ["required", "string", "max:255"],
             "number" => ["required", "string", "max:10"],
@@ -50,19 +55,23 @@ class UserController extends Controller
             "state" => ["required", "string", "max:2"],
         ]);
 
-        $imagePath = $request->file("image")->store("users", "public");
+        $image = null;
 
-        DB::transaction(function () use ($validated) {
+        if ($request->hasFile("image")) {
+            $image = $request->file("image")->store("users", "public");
+        }
+
+        DB::transaction(function () use ($validated, $image) {
             $user = User::create([
                 "name" => $validated["name"],
                 "email" => $validated["email"],
                 "password" => bcrypt($validated["password"]),
-                "is_admin" => $validated["is_admin"],
+                "is_admin" => $validated["is_admin"] ?? false,
                 "cpf" => $validated["cpf"],
                 "phone_number" => $validated["phone_number"],
                 "birth_date" => $validated["birth_date"],
-                "image_path" => $imagePath,
-                "balance" => $validated["balance"],
+                "image" => $image,
+                "balance" => $validated["balance"] ?? 0,
             ]);
 
             $user->address()->create([
@@ -76,7 +85,9 @@ class UserController extends Controller
             ]);
         });
 
-        return redirect()->route("users.index")->with("success", "Usuário criado com sucesso");
+        return redirect()
+            ->route("users.index")
+            ->with("success", "Usuário criado com sucesso");
     }
 
     public function edit(User $user)
@@ -98,42 +109,55 @@ class UserController extends Controller
 
         $validated = $request->validate([
             "name" => ["required", "string", "max:255"],
-            "email" => ["required", "string", "email", "max:255", "unique:users,email," . $user->id],
+            "email" => [
+                "required",
+                "string",
+                "email",
+                "max:255",
+                "unique:users,email," . $user->id,
+            ],
             "password" => ["nullable", "string", "min:8", "confirmed"],
-            "is_admin" => ["nullable", "boolean"],
-            "cpf" => ["required", "string", "max:14", "unique:users,cpf," . $user->id],
+            "is_admin" => ["boolean"],
+            "cpf" => [
+                "required",
+                "string",
+                "max:14",
+                "unique:users,cpf," . $user->id,
+            ],
             "phone_number" => ["required", "string", "max:20"],
             "birth_date" => ["required", "date"],
+            "balance" => ["numeric", "min:0"],
             "image" => ["nullable", "image", "max:2048"],
-            "balance" => ["required", "numeric", "min:0"],
-            "cep" => ["required", "string", "max:9"],
+            "cep" => ["required", "string", "max:8"],
             "street" => ["required", "string", "max:255"],
             "number" => ["required", "string", "max:10"],
             "complement" => ["nullable", "string", "max:255"],
             "neighborhood" => ["required", "string", "max:255"],
             "city" => ["required", "string", "max:255"],
-            "state" => ["required", "string", "max:2"],
+            "state" => ["required", "string", "max:255"],
         ]);
 
         if ($request->hasFile("image")) {
-            Storage::disk("public")->delete($user->photo_path);
+            Storage::disk("public")->delete($user->image_path);
 
-            $validated["photo_path"] = $request
+            $validated["image"] = $request
                 ->file("image")
-                ->store("products", "public");
+                ->store("users", "public");
         }
 
-        DB::transaction(function () use ($validated) {
+        DB::transaction(function () use ($validated, $user) {
             $user->update([
                 "name" => $validated["name"],
                 "email" => $validated["email"],
-                "password" => isset($validated["password"]) ? bcrypt($validated["password"]) : $user->password,
+                "password" => isset($validated["password"])
+                    ? bcrypt($validated["password"])
+                    : $user->password,
                 "is_admin" => $validated["is_admin"] ?? $user->is_admin,
                 "cpf" => $validated["cpf"],
                 "phone_number" => $validated["phone_number"],
                 "birth_date" => $validated["birth_date"],
-                "image_path" => $validated["image_path"] ?? $user->image_path,
-                "balance" => $validated["balance"],
+                "image" => $validated["image"] ?? $user->image_path,
+                "balance" => $validated["balance"] ?? $user->balance,
             ]);
 
             $user->address()->update([
@@ -148,8 +172,8 @@ class UserController extends Controller
         });
 
         return redirect()
-            ->route("products.index")
-            ->with("success", "Produto atualizado com sucesso");
+            ->route("users.index")
+            ->with("success", "Usuário atualizado com sucesso");
     }
 
     public function destroy(User $user)
@@ -158,7 +182,7 @@ class UserController extends Controller
             abort(403);
         }
 
-        Storage::disk("public")->delete($user->photo_path);
+        Storage::disk("public")->delete($user->image);
 
         DB::transaction(function () use ($user) {
             $user->address()->delete();

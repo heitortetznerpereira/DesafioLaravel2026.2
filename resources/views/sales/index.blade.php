@@ -114,7 +114,7 @@
                 <td class="p-4">
 
                     <img
-                        src="{{ Storage::url($sale->product->image_path) }}"
+                        src="{{ Storage::url($sale->product->image) }}"
                         class="w-16 h-16 rounded object-cover"
                     >
 

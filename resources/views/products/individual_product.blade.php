@@ -11,7 +11,7 @@
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
 
             <img
-                src="{{ Storage::url($product->image_path) }}"
+                src="{{ Storage::url($product->image) }}"
                 alt="{{ $product->name }}"
                 class="w-full aspect-square object-cover"
             >

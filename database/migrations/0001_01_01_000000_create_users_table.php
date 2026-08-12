@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('phone_number');
             $table->string('cpf');
             $table->date('birth_date');
-            $table->string('photo_path')->nullable();
+            $table->string('image')->nullable();
             $table->decimal('balance', 10, 2)->default(0.00);
             $table->foreignId('creator_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

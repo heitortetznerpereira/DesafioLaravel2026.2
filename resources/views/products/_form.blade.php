@@ -1,3 +1,13 @@
+@if ($errors->any())
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <ul class="list-disc list-inside">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="space-y-6">
 
     <div>
@@ -99,7 +109,7 @@
     @isset($product)
 
         <img
-            src="{{ Storage::url($product->image_path) }}"
+            src="{{ Storage::url($product->image) }}"
             class="w-48 rounded-lg shadow"
         >
 

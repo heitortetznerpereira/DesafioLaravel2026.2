@@ -31,10 +31,12 @@ Route::middleware("auth")->group(function () {
 
     Route::get("/", [HomeController::class, "index"])->name("home");
 
+    /*
     Route::get("/individual_product/{product}", [
         ProductController::class,
         "show",
     ])->name("product.show");
+    */
 
     Route::resource("products", ProductController::class);
 

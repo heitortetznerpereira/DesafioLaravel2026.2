@@ -33,7 +33,7 @@ class UserFactory extends Factory
             'phone_number' => fake()->phoneNumber(),
             'cpf' => fake()->numerify('###########'),
             'birth_date' => fake()->date(),
-            'photo_path' => fake()->imageUrl(),
+            'image' => fake()->imageUrl(),
             'balance' => fake()->randomFloat(2, 0, 10000),
             'creator_id' => null,
         ];

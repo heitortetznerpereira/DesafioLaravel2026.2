@@ -54,7 +54,7 @@ class ProductController extends Controller
             "image" => ["required", "image", "max:2048"],
         ]);
 
-        $imagePath = $request->file("image")->store("products", "public");
+        $image = $request->file("image")->store("products", "public");
 
         Product::create([
             "name" => $validated["name"],
@@ -63,7 +63,7 @@ class ProductController extends Controller
             "description" => $validated["description"],
             "category_id" => $validated["category_id"],
             "creator_id" => Auth::id(),
-            "image_path" => $imagePath,
+            "image" => $image,
         ]);
 
         return redirect()
@@ -99,9 +99,9 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile("image")) {
-            Storage::disk("public")->delete($product->image_path);
+            Storage::disk("public")->delete($product->image);
 
-            $validated["image_path"] = $request
+            $validated["image"] = $request
                 ->file("image")
                 ->store("products", "public");
         }
@@ -112,7 +112,7 @@ class ProductController extends Controller
             "amount" => $validated["amount"],
             "description" => $validated["description"],
             "category_id" => $validated["category_id"],
-            "image_path" => $validated["image_path"] ?? $product->image_path,
+            "image" => $validated["image"] ?? $product->image,
         ]);
 
         return redirect()
@@ -126,7 +126,7 @@ class ProductController extends Controller
             abort(403);
         }
 
-        Storage::disk("public")->delete($product->image_path);
+        Storage::disk("public")->delete($product->image);
 
         $product->delete();
 
