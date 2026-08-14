@@ -6,6 +6,10 @@
 
 <div class="max-w-7xl mx-auto py-8">
 
+    @include('components.searchbar', [
+        'route' => 'users.index'
+    ])
+
     <div class="flex justify-between items-center mb-8">
 
         <h1 class="text-3xl font-bold">

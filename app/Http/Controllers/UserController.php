@@ -10,12 +10,24 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $users = User::query();
+
+        if ($request->filled("search")) {
+            $users->where(
+                "name",
+                "like",
+                "%" . $request->input("search") . "%",
+            );
+        }
+
+        $users = $users->where("is_admin", false);
+
         if (!Auth::user()->is_admin) {
-            $users = User::where("id", Auth::id())->paginate(10);
+            $users = $users->where("id", Auth::id())->paginate(10);
         } else {
-            $users = User::paginate(10);
+            $users = $users->paginate(10);
         }
 
         return view("users.index", [
@@ -23,12 +35,23 @@ class UserController extends Controller
         ]);
     }
 
-    public function admins()
+    public function admins(Request $request)
     {
         if (!Auth::user()->is_admin) {
             abort(403);
         }
-        $users = User::where("is_admin", true)->paginate(10);
+
+        $users = User::query();
+
+        if ($request->filled("search")) {
+            $users->where(
+                "name",
+                "like",
+                "%" . $request->input("search") . "%",
+            );
+        }
+
+        $users = $users->where("is_admin", true)->paginate(10);
 
         return view("admins.index", [
             "users" => $users,
