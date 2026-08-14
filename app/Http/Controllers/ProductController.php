@@ -17,16 +17,33 @@ class ProductController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        if (!Auth::user()->is_admin) {
-            $products = Product::where("creator_id", Auth::id())->paginate(10);
-        } else {
-            $products = Product::paginate(10);
+        $products = Product::query();
+
+        if ($request->filled("search")) {
+            $products->where(
+                "name",
+                "like",
+                "%" . $request->input("search") . "%",
+            );
         }
+
+        if ($request->filled("category")) {
+            $products->where("category_id", $request->category);
+        }
+
+        $categories = Category::orderBy("name")->get();
+
+        if (!Auth::user()->is_admin) {
+                    $products = $products->where("creator_id", Auth::id())->paginate(10);
+                } else {
+                    $products = $products->paginate(10);
+                }
 
         return view("products.index", [
             "products" => $products,
+            "categories" => $categories,
         ]);
     }
 
