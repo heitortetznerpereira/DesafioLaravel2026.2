@@ -73,11 +73,26 @@
             </div>
 
             @if(!Auth::user()->is_admin)
-                <button
+            <form
+                method="POST"
+                action="{{ route('products.buy', $product) }}"
+            >
+                @csrf
+
+                <input
+                    type="number"
+                    name="amount"
+                    value="1"
+                    min="1"
+                >
+
+                <button type="submit"
                     class="mt-10 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-xl transition"
                 >
                     Comprar
                 </button>
+
+            </form>
             @endif
 
         </div>

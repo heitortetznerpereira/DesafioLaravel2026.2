@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminMailController;
+use App\Http\Controllers\PagBankController;
 use App\Http\Controllers\UserController;
 
 Route::get("/welcome", function () {
@@ -17,6 +18,11 @@ Route::get("/dashboard", function () {
 })
     ->middleware(["auth", "verified"])
     ->name("dashboard");
+
+    Route::post("/pagbank/webhook", [
+        PagBankController::class,
+        "webhook",
+    ])->name("pagbank.webhook");
 
 Route::middleware("auth")->group(function () {
     Route::get("/profile", [ProfileController::class, "edit"])->name(
@@ -58,23 +64,63 @@ Route::middleware("auth")->group(function () {
         "admin.mail.store",
     );
 
-    Route::get("/users", [UserController::class, 'index'])->name('users.index');
-    Route::get("/users/create", [UserController::class, 'create'])->name('users.create');
-    Route::post("/users/store", [UserController::class, 'store'])->name('users.store');
-    Route::get("/users/edit/{user}", [UserController::class, 'edit'])->name('users.edit');
-    Route::put("/users/update/{user}", [UserController::class, 'update'])->name('users.update');
-    Route::get("/users/show/{user}", [UserController::class, 'show'])->name('users.show');
-    Route::delete("/users/delete/{user}", [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get("/users", [UserController::class, "index"])->name("users.index");
+    Route::get("/users/create", [UserController::class, "create"])->name(
+        "users.create",
+    );
+    Route::post("/users/store", [UserController::class, "store"])->name(
+        "users.store",
+    );
+    Route::get("/users/edit/{user}", [UserController::class, "edit"])->name(
+        "users.edit",
+    );
+    Route::put("/users/update/{user}", [UserController::class, "update"])->name(
+        "users.update",
+    );
+    Route::get("/users/show/{user}", [UserController::class, "show"])->name(
+        "users.show",
+    );
+    Route::delete("/users/delete/{user}", [
+        UserController::class,
+        "destroy",
+    ])->name("users.destroy");
 
-    Route::get("/admins", [UserController::class, 'admins'])->name('admins.index');
-    Route::get("/admins/show/{user}", [UserController::class, 'show'])->name('admins.show');
-    Route::get("/admins/create", [UserController::class, 'createAdmin'])->name('admins.create');
-    Route::post("/admins/store", [UserController::class, 'store'])->name('admins.store');
-    Route::get("/admins/edit/{user}", [UserController::class, 'edit'])->name('admins.edit');
-    Route::put("/admins/update/{user}", [UserController::class, 'update'])->name('admins.update');
-    Route::delete("/admins/delete/{user}", [UserController::class, 'destroy'])->name('admins.destroy');
+    Route::get("/admins", [UserController::class, "admins"])->name(
+        "admins.index",
+    );
+    Route::get("/admins/show/{user}", [UserController::class, "show"])->name(
+        "admins.show",
+    );
+    Route::get("/admins/create", [UserController::class, "createAdmin"])->name(
+        "admins.create",
+    );
+    Route::post("/admins/store", [UserController::class, "store"])->name(
+        "admins.store",
+    );
+    Route::get("/admins/edit/{user}", [UserController::class, "edit"])->name(
+        "admins.edit",
+    );
+    Route::put("/admins/update/{user}", [
+        UserController::class,
+        "update",
+    ])->name("admins.update");
+    Route::delete("/admins/delete/{user}", [
+        UserController::class,
+        "destroy",
+    ])->name("admins.destroy");
 
     Route::get("/cart");
+
+    Route::post("/products/{product}/buy", [
+        SaleController::class,
+        "buy",
+    ])->name("products.buy");
+
+    Route::get("/sales/{sale}/return", [SaleController::class, "return"])->name(
+        "sales.return",
+    );
+
+
 });
 
 require __DIR__ . "/auth.php";

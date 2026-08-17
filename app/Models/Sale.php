@@ -9,7 +9,17 @@ class Sale extends Model
 {
     //
     use HasFactory;
-    protected $fillable = ["product_id", "buyer_id", "seller_id", "price"];
+    protected $fillable = [
+        "product_id",
+        "buyer_id",
+        "seller_id",
+        "status",
+        "pagbank_checkout_id",
+        "unit_price",
+        "amount",
+        "image",
+        "name",
+    ];
 
     public function product()
     {

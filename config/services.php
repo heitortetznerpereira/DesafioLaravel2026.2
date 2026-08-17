@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'pagbank' => [
+        'token' => env('PAGBANK_TOKEN'),
+        'url' => env('PAGBANK_URL'),
+    ]
+
 ];

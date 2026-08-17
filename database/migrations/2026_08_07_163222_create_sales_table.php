@@ -25,10 +25,13 @@ return new class extends Migration {
                 ->constrained("users")
                 ->nullOnDelete();
 
+            $table->string("status")->default("pending");
+            $table->string("pagbank_checkout_id")->nullable()->unique();
+
             $table->string("image")->nullable();
             $table->string("name");
             $table->integer("amount");
-            $table->decimal("price", 10, 2);
+            $table->decimal("unit_price", 10, 2);
 
             $table->timestamps();
         });

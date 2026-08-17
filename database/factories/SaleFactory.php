@@ -22,7 +22,7 @@ class SaleFactory extends Factory
             "product_id" => Product::inRandomOrder()->first()->id,
             "buyer_id" => User::inRandomOrder()->first()->id,
             "seller_id" => User::inRandomOrder()->first()->id,
-            "price" => fake()->randomFloat(2, 10, 1000),
+            "unit_price" => fake()->randomFloat(2, 10, 1000),
         ];
     }
 }
