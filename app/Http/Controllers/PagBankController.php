@@ -13,7 +13,7 @@ class PagBankController extends Controller
     {
         $payload = $request->all();
 
-        Log::info("PagBank webhook recebido", $payload);
+        Log::info("PagBank webhook", $payload);
 
         $referenceId = $payload["reference_id"] ?? null;
 
@@ -29,7 +29,7 @@ class PagBankController extends Controller
         if (!str_starts_with($referenceId, "sale-")) {
             return response()->json(
                 [
-                    "message" => "Referência inválida.",
+                    "message" => "reference_id inválido.",
                 ],
                 400,
             );
@@ -61,41 +61,58 @@ class PagBankController extends Controller
 
         $status = $charge["status"] ?? null;
 
-        if ($status !== "PAID") {
-            $sale->update([
-                "status" => match ($status) {
-                    "IN_ANALYSIS" => "pending",
-                    "WAITING" => "pending",
-                    "DECLINED" => "cancelled",
-                    "CANCELED" => "cancelled",
-                    default => $sale->status,
-                },
-            ]);
+        /*
+         * Payment was approved.
+         */
+        if ($status === "PAID") {
+            DB::transaction(function () use ($sale) {
+                $sale->refresh();
+
+                /*
+                 * Prevent duplicate credit.
+                 */
+                if ($sale->status === "paid") {
+                    return;
+                }
+
+                $sale->update([
+                    "status" => "paid",
+                ]);
+
+                if ($sale->seller_id) {
+                    $seller = $sale->seller()->lockForUpdate()->first();
+
+                    if ($seller) {
+                        $total = $sale->unit_price * $sale->amount;
+
+                        $seller->increment("balance", $total);
+                    }
+                }
+            });
 
             return response()->json([
-                "message" => "Status recebido.",
+                "message" => "Pagamento confirmado.",
             ]);
         }
 
-        DB::transaction(function () use ($sale) {
-            $sale->refresh();
-
-            // Prevent duplicate credit.
-            if ($sale->status === "paid") {
-                return;
-            }
-
+        /*
+         * Payment was declined/cancelled.
+         */
+        if (in_array($status, ["DECLINED", "CANCELED"])) {
             $sale->update([
-                "status" => "paid",
+                "status" => "cancelled",
             ]);
 
-            $seller = $sale->seller()->lockForUpdate()->firstOrFail();
+            return response()->json([
+                "message" => "Pagamento recusado/cancelado.",
+            ]);
+        }
 
-            $seller->increment("balance", $sale->total_price);
-        });
-
+        /*
+         * Payment is still being processed.
+         */
         return response()->json([
-            "message" => "Pagamento processado.",
+            "message" => "Pagamento ainda pendente.",
         ]);
     }
 }

@@ -19,10 +19,9 @@ Route::get("/dashboard", function () {
     ->middleware(["auth", "verified"])
     ->name("dashboard");
 
-    Route::post("/pagbank/webhook", [
-        PagBankController::class,
-        "webhook",
-    ])->name("pagbank.webhook");
+Route::post("/pagbank/webhook", [PagBankController::class, "webhook"])->name(
+    "pagbank.webhook",
+);
 
 Route::middleware("auth")->group(function () {
     Route::get("/profile", [ProfileController::class, "edit"])->name(
@@ -119,8 +118,6 @@ Route::middleware("auth")->group(function () {
     Route::get("/sales/{sale}/return", [SaleController::class, "return"])->name(
         "sales.return",
     );
-
-
 });
 
 require __DIR__ . "/auth.php";

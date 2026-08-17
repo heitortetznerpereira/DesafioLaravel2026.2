@@ -18,11 +18,17 @@ class SaleFactory extends Factory
      */
     public function definition(): array
     {
+        $p = Product::inRandomOrder()->first();
+        $u = User::inRandomOrder()->first();
+        $s = User::inRandomOrder()->first();
         return [
-            "product_id" => Product::inRandomOrder()->first()->id,
-            "buyer_id" => User::inRandomOrder()->first()->id,
-            "seller_id" => User::inRandomOrder()->first()->id,
-            "unit_price" => fake()->randomFloat(2, 10, 1000),
+            "product_id" => $p->id,
+            "buyer_id" => $u->id,
+            "seller_id" => $s->id,
+            "unit_price" => $p->price,
+            "name" => $p->name,
+            "image" => $p->image,
+            "amount" => fake()->randomDigit()
         ];
     }
 }

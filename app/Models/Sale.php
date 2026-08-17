@@ -21,6 +21,10 @@ class Sale extends Model
         "name",
     ];
 
+    protected $casts = [
+            "unit_price" => "decimal:2",
+        ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -13,7 +13,11 @@ return new class extends Migration {
         Schema::create("sales", function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId("product_id")->constrained()->nullOnDelete();
+            $table
+                ->foreignId("product_id")
+                ->nullable()
+                ->constrained("products")
+                ->nullOnDelete();
 
             $table
                 ->foreignId("buyer_id")
@@ -22,6 +26,7 @@ return new class extends Migration {
 
             $table
                 ->foreignId("seller_id")
+                ->nullable()
                 ->constrained("users")
                 ->nullOnDelete();
 
