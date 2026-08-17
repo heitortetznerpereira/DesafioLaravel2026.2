@@ -32,7 +32,7 @@
 
                 <p>
                     <span class="font-semibold">Quantidade:</span>
-                    {{ $product->quantity }}
+                    {{ $product->amount}}
                 </p>
 
                 <p>
