@@ -122,7 +122,9 @@ class UserController extends Controller
             $image = $request->file("image")->store("users", "public");
         }
 
-        DB::transaction(function () use ($validated, $image) {
+        $creator = Auth::id();
+
+        DB::transaction(function () use ($validated, $image, $creator) {
             $user = User::create([
                 "name" => $validated["name"],
                 "email" => $validated["email"],
@@ -133,6 +135,7 @@ class UserController extends Controller
                 "birth_date" => $validated["birth_date"],
                 "image" => $image,
                 "balance" => $validated["balance"] ?? 0,
+                "creator_id" => $creator
             ]);
 
             if (!$user->is_admin) {
