@@ -26,6 +26,15 @@
             Ver Produto
         </a>
 
+        @unless(auth()->user()->isAdmin())
+
+        <a href="{{ route('products.show', $product) }}"
+                    class="mt-3 block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+                >
+                    Comprar
+                </a>
+
+                @endunless
     </div>
 
 </div>
