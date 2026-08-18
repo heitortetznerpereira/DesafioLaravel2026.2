@@ -67,7 +67,7 @@
 
                     <tr class="border-t">
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             <img
                                 src="{{ Storage::url($user->image) }}"
@@ -76,32 +76,32 @@
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $user->name }}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $user->email}}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $user->cpf }}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             R$ {{ number_format($user->balance, 2, ',', '.') }}
 
                         </td>
                         <td class="p-4">
 
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 justify-center">
 
                                 <a
                                     href="{{ route('users.show', $user) }}"

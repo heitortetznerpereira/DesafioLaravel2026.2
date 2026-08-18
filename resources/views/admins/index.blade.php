@@ -64,7 +64,7 @@
 
                     <tr class="border-t">
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             <img
                                 src="{{ Storage::url($user->image) }}"
@@ -73,27 +73,27 @@
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $user->name }}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $user->email}}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $user->cpf }}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 justify-center">
 
                                 <a
                                     href="{{ route('admins.show', $user) }}"
@@ -140,7 +140,7 @@
                             class="text-center p-8 text-gray-500"
                         >
 
-                            Nenhum admin cadastrado.
+                            Nenhum admin cadastrado por você.
 
                         </td>
 

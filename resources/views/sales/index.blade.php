@@ -120,37 +120,37 @@
 
                 </td>
 
-                <td class="p-4">
+                <td class="p-4 text-center">
 
                     {{ $sale->product->name }}
 
                 </td>
 
-                <td class="p-4">
+                <td class="p-4 text-center">
 
                     {{ $sale->product->category->name }}
 
                 </td>
 
-                <td class="p-4">
+                <td class="p-4 text-center">
 
                     {{ $sale->buyer->name }}
 
                 </td>
 
-                <td class="p-4">
+                <td class="p-4 text-center">
 
                     {{ $sale->seller->name }}
 
                 </td>
 
-                <td class="p-4 text-green-600 font-semibold">
+                <td class="p-4 text-green-600 font-semibold text-center">
 
                     R$ {{ number_format($sale->price, 2, ',', '.') }}
 
                 </td>
 
-                <td class="p-4">
+                <td class="p-4 text-center">
 
                     {{ $sale->created_at->format('d/m/Y') }}
 
@@ -186,3 +186,5 @@
 </div>
 
 @endsection
+
+<!-- TODO : centralizar resto das tabelas -->

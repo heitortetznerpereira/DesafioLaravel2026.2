@@ -51,6 +51,7 @@ class UserController extends Controller
             );
         }
 
+        //$users = $users->where("creator_id", Auth::id());
         $users = $users->where("is_admin", true)->paginate(10);
 
         return view("admins.index", [

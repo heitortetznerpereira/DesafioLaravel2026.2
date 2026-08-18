@@ -100,7 +100,38 @@ class SaleController extends Controller
             "amount" => $amount,
             "unit_price" => $product->price,
         ]);
+
+        $response = Http::withToken(
+            config("services.pagbank.token")
+        )->post(
+            config("services.pagbank.url") . "/checkouts",
+            [
+                "reference_id" => "sale-" . $sale->id,
+
+                "items" => [
+                    [
+                        "reference_id" => (string) $sale->id,
+                        "name" => $sale->name,
+                        "quantity" => $sale->amount,
+                        "unit_amount" => (int) round(
+                            $sale->unit_price * 100
+                        ),
+                    ],
+                ],
+
+                "redirect_url" => route("sales.return", $sale),
+
+                "return_url" => route("sales.return", $sale),
+
+                "payment_notification_urls" => [
+                    route("pagbank.webhook"),
+                ],
+            ]
+        );
+
+        /*
         $response = Http::withToken(config("services.pagbank.token"))->post(
+
             config("services.pagbank.url") . "/checkouts",
             [
                 "reference_id" => "sale-" . $sale->id,
@@ -117,6 +148,7 @@ class SaleController extends Controller
                 "payment_notification_urls" => [route("pagbank.webhook")],
             ],
         );
+        */
 
         if ($response->failed()) {
             $sale->delete();

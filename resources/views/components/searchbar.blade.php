@@ -1,3 +1,4 @@
+<!-- TODO : mudar placeholder -->
 <form method="GET" action="{{ route($route) }}"
           class="flex flex-col md:flex-row gap-4 mb-8">
 
@@ -5,7 +6,7 @@
             type="text"
             name="search"
             value="{{ request('search') }}"
-            placeholder="Pesquisar produtos..."
+            placeholder="Pesquisar..."
             class="flex-1 rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
 

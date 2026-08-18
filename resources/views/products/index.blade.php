@@ -69,7 +69,7 @@
 
                     <tr class="border-t">
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             <img
                                 src="{{ Storage::url($product->image) }}"
@@ -78,25 +78,25 @@
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $product->name }}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $product->category->name }}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             R$ {{ number_format($product->price, 2, ',', '.') }}
 
                         </td>
 
-                        <td class="p-4">
+                        <td class="p-4 text-center">
 
                             {{ $product->amount }}
 
@@ -104,7 +104,7 @@
 
                         <td class="p-4">
 
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 justify-center">
 
                                 <a
                                     href="{{ route('products.show', $product) }}"
