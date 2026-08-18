@@ -51,8 +51,17 @@ Route::middleware("auth")->group(function () {
         "sales.pdf",
     );
 
+
     Route::get("/sales/xlsx", [SaleController::class, "exportExcel"])->name(
         "sales.xlsx",
+    );
+
+
+    Route::get("/purchases", [SaleController::class, "purchases"])->name("purchases.index");
+
+
+    Route::get("/purchases/pdf", [SaleController::class, "exportPdfPurchase"])->name(
+        "purchases.pdf",
     );
 
     Route::get("/admin/mail", [AdminMailController::class, "create"])->name(

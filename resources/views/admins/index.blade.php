@@ -1,4 +1,3 @@
-<!--  TODO : adicionar pesquisa, pode apenas ver admins criados por si mesmo -->
 @extends('layouts.main')
 
 @section('title', 'Admins')

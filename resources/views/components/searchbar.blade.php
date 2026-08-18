@@ -1,4 +1,3 @@
-<!-- TODO : mudar placeholder -->
 <form method="GET" action="{{ route($route) }}"
           class="flex flex-col md:flex-row gap-4 mb-8">
 

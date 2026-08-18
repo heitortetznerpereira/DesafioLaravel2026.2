@@ -84,7 +84,7 @@ até
 
 <td>
 
-{{ $sale->product->name }}
+{{ $sale->name }}
 
 </td>
 
@@ -108,7 +108,7 @@ até
 
 <td>
 
-R$ {{ number_format($sale->price,2,',','.') }}
+R$ {{ number_format($sale->unit_price,2,',','.') }}
 
 </td>
 
@@ -129,3 +129,5 @@ R$ {{ number_format($sale->price,2,',','.') }}
 </body>
 
 </html>
+
+<!-- TODO : mudar datas para filtrar a mais antiga e data atual -->

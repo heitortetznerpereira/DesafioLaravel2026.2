@@ -35,6 +35,25 @@ class SaleController extends Controller
         return view("sales.index", compact("sales"));
     }
 
+    public function purchases(Request $request)
+        {
+            $query = Sale::with(["product.category", "buyer", "seller"]);
+
+            $query->where("buyer_id", Auth::id());
+
+            if ($request->filled("start_date")) {
+                $query->whereDate("created_at", ">=", $request->start_date);
+            }
+
+            if ($request->filled("end_date")) {
+                $query->whereDate("created_at", "<=", $request->end_date);
+            }
+
+            $sales = $query->latest()->paginate(10)->withQueryString();
+
+            return view("sales.purchases", compact("sales"));
+        }
+
     public function exportPdf(Request $request)
     {
         $query = Sale::with(["product.category", "buyer", "seller"]);
@@ -42,6 +61,28 @@ class SaleController extends Controller
         if (!Auth::user()->is_admin) {
             $query->where("seller_id", Auth::id());
         }
+
+        if ($request->filled("start_date")) {
+            $query->whereDate("created_at", ">=", $request->start_date);
+        }
+
+        if ($request->filled("end_date")) {
+            $query->whereDate("created_at", "<=", $request->end_date);
+        }
+
+        $sales = $query->latest()->get();
+
+        $pdf = Pdf::loadView("sales.pdf", compact("sales"));
+
+        return $pdf->stream("relatorio-vendas.pdf");
+    }
+
+
+    public function exportPdfPurchase(Request $request)
+    {
+        $query = Sale::with(["product.category", "buyer", "seller"]);
+
+            $query->where("buyer_id", Auth::id());
 
         if ($request->filled("start_date")) {
             $query->whereDate("created_at", ">=", $request->start_date);

@@ -1,6 +1,6 @@
     @extends('layouts.main')
 
-    @section('title', 'Histórico de Vendas')
+    @section('title', 'Histórico de Compras')
 
     @section('content')
 
@@ -9,7 +9,7 @@
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
 
             <h1 class="text-3xl font-bold">
-                Histórico de Vendas
+                Histórico de Compras
             </h1>
 
             <form
@@ -51,13 +51,14 @@
                 </button>
 
                 <a
-                    href="{{ route('sales.pdf', request()->query()) }}"
+                    href="{{ route('purchases.pdf', request()->query()) }}"
                     target="_blank"
                     class="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700"
                 >
                     Gerar PDF
                 </a>
 
+                <!--
                 @if(Auth::user()->is_admin)
 
                 <a
@@ -70,6 +71,7 @@
                 </a>
 
                 @endif
+                -->
 
             </form>
 
@@ -108,7 +110,7 @@
                 <td class="p-4">
 
                     <img
-                        src="{{ Storage::url($sale->product->image) }}"
+                        src="{{ Storage::url($sale->image) }}"
                         class="w-16 h-16 rounded object-cover"
                     >
 
@@ -116,13 +118,13 @@
 
                 <td class="p-4 text-center">
 
-                    {{ $sale->product->name }}
+                    {{ $sale->name }}
 
                 </td>
 
                 <td class="p-4 text-green-600 font-semibold text-center">
 
-                    R$ {{ number_format($sale->price, 2, ',', '.') }}
+                    R$ {{ number_format($sale->unit_price, 2, ',', '.') }}
 
                 </td>
 
