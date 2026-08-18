@@ -7,6 +7,7 @@ use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminMailController;
 use App\Http\Controllers\PagBankController;
+use App\Http\Controllers\ProductsOnCartController;
 use App\Http\Controllers\UserController;
 
 Route::get("/welcome", function () {
@@ -117,7 +118,7 @@ Route::middleware("auth")->group(function () {
         "destroy",
     ])->name("admins.destroy");
 
-    Route::get("/cart");
+    Route::get("/cart", [ProductsOnCartController::class, "index"])->name("cart.index");
 
     Route::post("/products/{product}/buy", [
         SaleController::class,
