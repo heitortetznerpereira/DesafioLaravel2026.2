@@ -37,13 +37,23 @@ class SaleController extends Controller
         $salesChartData = [];
 
         if (!Auth::user()->is_admin) {
+            $chartQuery = Sale::query()
+                ->where("seller_id", Auth::id());
+
+            if ($request->filled("start_date")) {
+                $chartQuery->whereDate("created_at", ">=", $request->start_date);
+            }
+
+            if ($request->filled("end_date")) {
+                $chartQuery->whereDate("created_at", "<=", $request->end_date);
+            }
+
             $monthExpression = DB::connection()->getDriverName() === "sqlite"
                 ? "strftime('%Y-%m', created_at)"
                 : "DATE_FORMAT(created_at, '%Y-%m')";
 
-            $salesChart = Sale::query()
+            $salesChart = $chartQuery
                 ->selectRaw("$monthExpression as month, COUNT(*) as total")
-                ->where("seller_id", Auth::id())
                 ->where("created_at", ">=", now()->subMonths(11)->startOfMonth())
                 ->groupBy("month")
                 ->orderBy("month")

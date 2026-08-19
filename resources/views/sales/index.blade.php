@@ -74,11 +74,12 @@
             </form>
 
         </div>
-
     @if(!Auth::user()->is_admin && !empty($salesChartLabels))
-        <div class="bg-white rounded-xl shadow p-6 mb-8">
-            <h2 class="text-xl font-semibold mb-4">Vendas realizadas</h2>
-            <canvas id="salesChart" height="120"></canvas>
+        <div class="bg-white rounded-xl shadow p-4 mb-8 max-w-3xl mx-auto">
+            <h2 class="text-lg font-semibold mb-3 text-center">Vendas realizadas</h2>
+            <div class="h-52">
+                <canvas id="salesChart"></canvas>
+            </div>
         </div>
     @endif
 
