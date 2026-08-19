@@ -43,6 +43,20 @@ class ProductsOnCartController extends Controller
             "amount" => ["required", "integer", "min:1"],
         ]);
 
+        $product = Product::findOrFail($validated["product_id"]);
+
+        $existingAmount = ProductsOnCart::where("user_id", Auth::id())
+            ->where("product_id", $product->id)
+            ->value("amount") ?? 0;
+
+        if ($existingAmount + $validated["amount"] > $product->amount) {
+            return redirect()
+                ->route("cart.index")
+                ->withErrors([
+                    "product" => "Quantidade indisponível em estoque.",
+                ]);
+        }
+
         $cartItem = ProductsOnCart::firstOrNew([
             "user_id" => Auth::user()->id,
             "product_id" => $validated["product_id"],
@@ -92,6 +106,13 @@ class ProductsOnCartController extends Controller
                 $cartProduct->delete();
                 continue;
             }
+
+            if ($product->amount < $cartProduct->amount) {
+                $cartProduct->delete();
+                continue;
+            }
+
+            $product->decrement("amount", $cartProduct->amount);
 
             Sale::create([
                 "product_id" => $product->id,

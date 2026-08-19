@@ -45,6 +45,29 @@ it('adds a product to the cart for the authenticated user', function () {
     ]);
 });
 
+it('blocks adding more items than the available stock', function () {
+    $seller = User::factory()->create(['is_admin' => false]);
+    $buyer = User::factory()->create(['is_admin' => false]);
+    $product = Product::factory()->create([
+        'creator_id' => $seller->id,
+        'amount' => 2,
+    ]);
+
+    $response = $this
+        ->actingAs($buyer)
+        ->from(route('home'))
+        ->post(route('cart.store'), [
+            'product_id' => $product->id,
+            'amount' => 3,
+        ]);
+
+    $response
+        ->assertRedirect(route('cart.index'))
+        ->assertSessionHasErrors('product');
+
+    $this->assertDatabaseCount('products_on_cart', 0);
+});
+
 it('removes an item from the cart', function () {
     $seller = User::factory()->create(['is_admin' => false]);
     $buyer = User::factory()->create(['is_admin' => false]);
