@@ -45,6 +45,14 @@ class ProductsOnCartController extends Controller
 
         $product = Product::findOrFail($validated["product_id"]);
 
+        if ($product->creator_id === Auth::id()) {
+            return redirect()
+                ->route("cart.index")
+                ->withErrors([
+                    "product" => "Você não pode adicionar seu próprio produto ao carrinho.",
+                ]);
+        }
+
         $existingAmount = ProductsOnCart::where("user_id", Auth::id())
             ->where("product_id", $product->id)
             ->value("amount") ?? 0;

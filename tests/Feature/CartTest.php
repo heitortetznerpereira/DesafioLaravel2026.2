@@ -68,6 +68,26 @@ it('blocks adding more items than the available stock', function () {
     $this->assertDatabaseCount('products_on_cart', 0);
 });
 
+it('blocks the owner from adding their own product to the cart', function () {
+    $seller = User::factory()->create(['is_admin' => false]);
+    $product = Product::factory()->create([
+        'creator_id' => $seller->id,
+    ]);
+
+    $response = $this
+        ->actingAs($seller)
+        ->post(route('cart.store'), [
+            'product_id' => $product->id,
+            'amount' => 1,
+        ]);
+
+    $response
+        ->assertRedirect(route('cart.index'))
+        ->assertSessionHasErrors('product');
+
+    $this->assertDatabaseCount('products_on_cart', 0);
+});
+
 it('removes an item from the cart', function () {
     $seller = User::factory()->create(['is_admin' => false]);
     $buyer = User::factory()->create(['is_admin' => false]);
@@ -83,7 +103,7 @@ it('removes an item from the cart', function () {
 
     $cartItem = \App\Models\ProductsOnCart::first();
 
-    $response = $this->actingAs($buyer)->delete(route('cartProducts.destroy', $cartItem));
+    $response = $this->actingAs($buyer)->delete(route('cartProducts.destroy', ['cartProduct' => $cartItem->id]));
 
     $response->assertRedirect(route('cart.index'));
     $this->assertDatabaseMissing('products_on_cart', [

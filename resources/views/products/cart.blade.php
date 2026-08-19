@@ -119,7 +119,7 @@
                                 </a>
 
                                 <form
-                                    action="{{ route('cartProducts.destroy', $cartProduct) }}"
+                                    action="{{ route('cartProducts.destroy', ['cartProduct' => $cartProduct->id]) }}"
                                     method="POST"
                                     onsubmit="return confirm('Deseja excluir este produto?')"
                                 >

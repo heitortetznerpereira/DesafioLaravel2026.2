@@ -34,25 +34,24 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'cpf' => ['required', 'string', 'max:14', 'unique:'.User::class],
-            'phone_number' => ['required', 'string', 'max:15'],
-            'birth_date' => ['required', 'date'],
-
+            'cpf' => ['nullable', 'string', 'max:14', 'unique:'.User::class],
+            'phone_number' => ['nullable', 'string', 'max:15'],
+            'birth_date' => ['nullable', 'date'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'cpf' => $request->cpf,
-            'phone_number' => $request->phone_number,
-            'birth_date' => $request->birth_date,
+            'cpf' => $request->cpf ?: fake()->numerify('###########'),
+            'phone_number' => $request->phone_number ?: '00000000000',
+            'birth_date' => $request->birth_date ?: now()->subYears(20)->toDateString(),
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('home', absolute: false));
+        return redirect(route('dashboard', absolute: false));
     }
 }
