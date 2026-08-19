@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\ProductsOnCart;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,17 +40,75 @@ class ProductsOnCartController extends Controller
     {
         $validated = $request->validate([
             "product_id" => ["required", "exists:products,id"],
-            "amount" => ["integer", "min:1"],
+            "amount" => ["required", "integer", "min:1"],
         ]);
 
-        ProductsOnCart::create([
+        $cartItem = ProductsOnCart::firstOrNew([
             "user_id" => Auth::user()->id,
             "product_id" => $validated["product_id"],
-            "amount" => $validated["amount"],
         ]);
+
+        $cartItem->amount = ($cartItem->exists ? $cartItem->amount : 0) + $validated["amount"];
+        $cartItem->save();
 
         return redirect()
             ->route("cart.index")
             ->with("success", "Produto adicionado com sucesso");
+    }
+
+    public function destroy(ProductsOnCart $cartProduct)
+    {
+        if ($cartProduct->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $cartProduct->delete();
+
+        return redirect()
+            ->route("cart.index")
+            ->with("success", "Produto removido do carrinho.");
+    }
+
+    public function close()
+    {
+        $cartProducts = ProductsOnCart::with("product")
+            ->where("user_id", Auth::id())
+            ->get();
+
+        if ($cartProducts->isEmpty()) {
+            return redirect()
+                ->route("cart.index")
+                ->with("error", "Seu carrinho está vazio.");
+        }
+
+        foreach ($cartProducts as $cartProduct) {
+            $product = $cartProduct->product;
+
+            if (!$product) {
+                continue;
+            }
+
+            if ($product->creator_id === Auth::id()) {
+                $cartProduct->delete();
+                continue;
+            }
+
+            Sale::create([
+                "product_id" => $product->id,
+                "buyer_id" => Auth::id(),
+                "seller_id" => $product->creator_id,
+                "status" => "pending",
+                "image" => $product->image,
+                "name" => $product->name,
+                "amount" => $cartProduct->amount,
+                "unit_price" => $product->price,
+            ]);
+        }
+
+        ProductsOnCart::where("user_id", Auth::id())->delete();
+
+        return redirect()
+            ->route("cart.index")
+            ->with("success", "Carrinho fechado com sucesso.");
     }
 }

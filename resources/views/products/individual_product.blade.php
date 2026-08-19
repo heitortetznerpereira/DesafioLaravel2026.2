@@ -75,21 +75,28 @@
             @if(!Auth::user()->is_admin)
             <form
                 method="POST"
-                action="{{ route('products.buy', $product) }}"
+                action="{{ route('cart.store') }}"
             >
                 @csrf
+
+                <input
+                    type="hidden"
+                    name="product_id"
+                    value="{{ $product->id }}"
+                >
 
                 <input
                     type="number"
                     name="amount"
                     value="1"
                     min="1"
+                    class="w-24 border border-gray-300 rounded-lg px-3 py-2"
                 >
 
                 <button type="submit"
-                    class="mt-10 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-xl transition"
+                    class="mt-10 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold py-4 px-6 rounded-xl transition"
                 >
-                    Comprar
+                    Adicionar ao Carrinho
                 </button>
 
             </form>

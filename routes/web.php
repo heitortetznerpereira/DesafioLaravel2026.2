@@ -130,6 +130,8 @@ Route::middleware("auth")->group(function () {
 
     Route::get("/cart", [ProductsOnCartController::class, "index"])->name("cart.index");
     Route::post("/cart/store", [ProductsOnCartController::class, "store"])->name("cart.store");
+    Route::delete("/cart/{cartProduct}", [ProductsOnCartController::class, "destroy"])->name("cartProducts.destroy");
+    Route::post("/cart/close", [ProductsOnCartController::class, "close"])->name("cart.close");
 });
 
 require __DIR__ . "/auth.php";

@@ -18,6 +18,18 @@
             Meu Carrinho
         </h1>
 
+        @if($cartProducts->count())
+            <form action="{{ route('cart.close') }}" method="POST">
+                @csrf
+                <button
+                    type="submit"
+                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+                >
+                    Fechar Carrinho
+                </button>
+            </form>
+        @endif
+
     </div>
 
     @if(session('success'))
@@ -25,6 +37,16 @@
         <div class="bg-green-100 border border-green-400 text-green-700 p-4 rounded-lg mb-6">
 
             {{ session('success') }}
+
+        </div>
+
+    @endif
+
+    @if(session('error'))
+
+        <div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg mb-6">
+
+            {{ session('error') }}
 
         </div>
 
@@ -81,7 +103,7 @@
 
                         <td class="p-4 text-center">
 
-                            {{ $cartProduct->product->amount }}
+                            {{ $cartProduct->amount }}
 
                         </td>
 

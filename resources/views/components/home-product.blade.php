@@ -47,15 +47,20 @@
 
                         <input
                             type="hidden"
+                            name="product_id"
+                            value="{{ $product->id }}"
+                        >
+
+                        <input
+                            type="hidden"
                             name="amount"
                             value="1"
-                            min="1"
                         >
 
                         <button type="submit"
-                            class="mt-3 block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+                            class="mt-3 block w-full text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition"
                         >
-                            Comprar
+                            Adicionar ao Carrinho
                         </button>
 
                     </form>

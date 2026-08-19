@@ -18,15 +18,22 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $categoryId = Category::query()->exists()
+            ? Category::inRandomOrder()->first()->id
+            : Category::factory()->create()->id;
+
+        $creatorId = User::query()->exists()
+            ? User::inRandomOrder()->first()->id
+            : User::factory()->create()->id;
+
         return [
             'name' => fake()->words(2, true),
             'description' => fake()->sentence(),
             'price' => fake()->randomFloat(2, 5, 500),
             'image' => fake()->imageUrl(),
             'amount' => fake()->numberBetween(1, 100),
-            'category_id' => Category::inRandomOrder()->first()->id,
-            'creator_id' => User::inRandomOrder()->first()->id,
-
+            'category_id' => $categoryId,
+            'creator_id' => $creatorId,
         ];
     }
 }
