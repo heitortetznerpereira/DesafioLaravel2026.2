@@ -102,6 +102,7 @@
             <tbody>
 
             @forelse($sales as $sale)
+            @for($amount = 0; $amount < $sale->amount; $amount++)
 
             <tr class="border-t">
 
@@ -122,7 +123,7 @@
 
                 <td class="p-4 text-green-600 font-semibold text-center">
 
-                    R$ {{ number_format($sale->price, 2, ',', '.') }}
+                    R$ {{ number_format($sale->unit_price, 2, ',', '.') }}
 
                 </td>
 
@@ -133,6 +134,8 @@
                 </td>
 
             </tr>
+
+            @endfor
 
             @empty
 

@@ -14,7 +14,7 @@
 
             <form
                 method="GET"
-                action="{{ route('sales.index') }}"
+                action="{{ route('purchases.index') }}"
                 class="flex flex-wrap items-end gap-3"
             >
 
@@ -105,8 +105,10 @@
 
             @forelse($sales as $sale)
 
-            <tr class="border-t">
+            @for($amount = 0; $amount < $sale->amount; $amount++)
 
+            <tr class="border-t">
+                
                 <td class="p-4">
 
                     <img
@@ -135,6 +137,8 @@
                 </td>
 
             </tr>
+
+            @endfor
 
             @empty
 

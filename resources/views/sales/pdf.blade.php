@@ -5,7 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <title>Relatório de Vendas</title>
+    <title>Relatório</title>
 
     <style>
 
@@ -79,6 +79,7 @@ até
 <tbody>
 
 @foreach($sales as $sale)
+@for($amount = 0; $amount < $sale->amount; $amount++)
 
 <tr>
 
@@ -120,6 +121,7 @@ R$ {{ number_format($sale->unit_price,2,',','.') }}
 
 </tr>
 
+@endfor
 @endforeach
 
 </tbody>
