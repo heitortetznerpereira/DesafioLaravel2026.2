@@ -29,6 +29,13 @@
 
     </div>
 
+    @if(Auth::user()->is_admin && !empty($productChartLabels))
+        <div class="bg-white rounded-xl shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Produtos cadastrados</h2>
+            <canvas id="productChart" height="120"></canvas>
+        </div>
+    @endif
+
     @if(session('success'))
 
         <div class="bg-green-100 border border-green-400 text-green-700 p-4 rounded-lg mb-6">
@@ -173,5 +180,37 @@
     </div>
 
 </div>
+
+@if(Auth::user()->is_admin && !empty($productChartLabels))
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const productChartCtx = document.getElementById('productChart');
+
+    new Chart(productChartCtx, {
+        type: 'bar',
+        data: {
+            labels: @json($productChartLabels),
+            datasets: [{
+                label: 'Produtos cadastrados',
+                data: @json($productChartData),
+                backgroundColor: '#2563eb',
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>
+@endif
 
 @endsection

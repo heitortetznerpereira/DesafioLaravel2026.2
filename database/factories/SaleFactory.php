@@ -18,17 +18,27 @@ class SaleFactory extends Factory
      */
     public function definition(): array
     {
-        $p = Product::inRandomOrder()->first();
-        $u = User::inRandomOrder()->first();
-        $s = User::inRandomOrder()->first();
+        $product = Product::query()->exists()
+            ? Product::inRandomOrder()->first()
+            : Product::factory()->create();
+
+        $buyer = User::query()->exists()
+            ? User::inRandomOrder()->first()
+            : User::factory()->create(['is_admin' => false]);
+
+        $seller = User::query()->exists()
+            ? User::inRandomOrder()->first()
+            : User::factory()->create(['is_admin' => false]);
+
         return [
-            "product_id" => $p->id,
-            "buyer_id" => $u->id,
-            "seller_id" => $s->id,
-            "unit_price" => $p->price,
-            "name" => $p->name,
-            "image" => $p->image,
-            "amount" => fake()->randomDigit()
+            "product_id" => $product->id,
+            "buyer_id" => $buyer->id,
+            "seller_id" => $seller->id,
+            "status" => "pending",
+            "unit_price" => $product->price,
+            "name" => $product->name,
+            "image" => $product->image,
+            "amount" => fake()->numberBetween(1, 5),
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -39,11 +40,36 @@ class ProductController extends Controller
                     $products = $products->where("creator_id", Auth::id())->paginate(10);
                 } else {
                     $products = $products->paginate(10);
+
+                    $monthExpression = DB::connection()->getDriverName() === "sqlite"
+                        ? "strftime('%Y-%m', created_at)"
+                        : "DATE_FORMAT(created_at, '%Y-%m')";
+
+                    $productChart = Product::query()
+                        ->selectRaw("$monthExpression as month, COUNT(*) as total")
+                        ->where("created_at", ">=", now()->subMonths(11)->startOfMonth())
+                        ->groupBy("month")
+                        ->orderBy("month")
+                        ->get()
+                        ->keyBy("month");
+
+                    $productChartLabels = [];
+                    $productChartData = [];
+
+                    for ($i = 11; $i >= 0; $i--) {
+                        $month = now()->subMonths($i)->startOfMonth();
+                        $key = $month->format("Y-m");
+
+                        $productChartLabels[] = $month->translatedFormat("M");
+                        $productChartData[] = $productChart->get($key)?->total ?? 0;
+                    }
                 }
 
         return view("products.index", [
             "products" => $products,
             "categories" => $categories,
+            "productChartLabels" => $productChartLabels ?? [],
+            "productChartData" => $productChartData ?? [],
         ]);
     }
 

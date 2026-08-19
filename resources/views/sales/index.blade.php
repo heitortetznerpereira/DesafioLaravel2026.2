@@ -74,6 +74,14 @@
             </form>
 
         </div>
+
+    @if(!Auth::user()->is_admin && !empty($salesChartLabels))
+        <div class="bg-white rounded-xl shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Vendas realizadas</h2>
+            <canvas id="salesChart" height="120"></canvas>
+        </div>
+    @endif
+
     @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 rounded-lg p-4 mb-6">
             {{ session('success') }}
@@ -163,5 +171,39 @@
     </div>
 
 </div>
+
+@if(!Auth::user()->is_admin && !empty($salesChartLabels))
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const salesChartCtx = document.getElementById('salesChart');
+
+    new Chart(salesChartCtx, {
+        type: 'line',
+        data: {
+            labels: @json($salesChartLabels),
+            datasets: [{
+                label: 'Vendas realizadas',
+                data: @json($salesChartData),
+                borderColor: '#16a34a',
+                backgroundColor: 'rgba(22, 163, 74, 0.15)',
+                fill: true,
+                tension: 0.3,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>
+@endif
 
 @endsection

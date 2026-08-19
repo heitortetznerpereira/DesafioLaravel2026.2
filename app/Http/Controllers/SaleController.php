@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sale;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -32,7 +33,33 @@ class SaleController extends Controller
 
         $sales = $query->latest()->paginate(10)->withQueryString();
 
-        return view("sales.index", compact("sales"));
+        $salesChartLabels = [];
+        $salesChartData = [];
+
+        if (!Auth::user()->is_admin) {
+            $monthExpression = DB::connection()->getDriverName() === "sqlite"
+                ? "strftime('%Y-%m', created_at)"
+                : "DATE_FORMAT(created_at, '%Y-%m')";
+
+            $salesChart = Sale::query()
+                ->selectRaw("$monthExpression as month, COUNT(*) as total")
+                ->where("seller_id", Auth::id())
+                ->where("created_at", ">=", now()->subMonths(11)->startOfMonth())
+                ->groupBy("month")
+                ->orderBy("month")
+                ->get()
+                ->keyBy("month");
+
+            for ($i = 11; $i >= 0; $i--) {
+                $month = now()->subMonths($i)->startOfMonth();
+                $key = $month->format("Y-m");
+
+                $salesChartLabels[] = $month->translatedFormat("M");
+                $salesChartData[] = $salesChart->get($key)?->total ?? 0;
+            }
+        }
+
+        return view("sales.index", compact("sales", "salesChartLabels", "salesChartData"));
     }
 
     public function purchases(Request $request)
