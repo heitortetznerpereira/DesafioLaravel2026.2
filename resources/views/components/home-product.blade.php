@@ -26,6 +26,7 @@
             Ver Produto
         </a>
 
+        <!--
         @unless(auth()->user()->isAdmin())
 
         <a href="{{ route('products.show', $product) }}"
@@ -34,7 +35,31 @@
                     Comprar
                 </a>
 
-                @endunless
+        @endunless
+        -->
+
+        @if(!Auth::user()->is_admin)
+                    <form
+                        method="POST"
+                        action="{{ route('cart.store') }}"
+                    >
+                        @csrf
+
+                        <input
+                            type="hidden"
+                            name="amount"
+                            value="1"
+                            min="1"
+                        >
+
+                        <button type="submit"
+                            class="mt-3 block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+                        >
+                            Comprar
+                        </button>
+
+                    </form>
+                    @endif
     </div>
 
 </div>

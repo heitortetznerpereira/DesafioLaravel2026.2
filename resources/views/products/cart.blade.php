@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Meus Produtos')
+@section('title', 'Carrinho de Compras')
 
 @section('content')
 
@@ -9,23 +9,14 @@
 
     @include('components.searchbar', [
             'categories' => $categories,
-            'route' => 'products.index',
+            'route' => 'cart.index',
         ])
 
     <div class="flex justify-between items-center mb-8">
 
         <h1 class="text-3xl font-bold">
-            Meus Produtos
+            Meu Carrinho
         </h1>
-
-        @unless(Auth::user()->is_admin)
-        <a
-            href="{{ route('products.create') }}"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
-        >
-            Novo Produto
-        </a>
-        @endunless
 
     </div>
 
@@ -51,8 +42,6 @@
 
                     <th class="p-4">Nome</th>
 
-                    <th class="p-4">Categoria</th>
-
                     <th class="p-4">Preço</th>
 
                     <th class="p-4">Quantidade</th>
@@ -65,14 +54,14 @@
 
             <tbody>
 
-                @forelse($products as $product)
+                @forelse($cartProducts as $cartProduct)
 
                     <tr class="border-t">
 
                         <td class="p-4 text-center">
 
                             <img
-                                src="{{ Storage::url($product->image) }}"
+                                src="{{ Storage::url($cartProduct->product->image) }}"
                                 class="w-20 h-20 object-cover rounded"
                             >
 
@@ -80,25 +69,19 @@
 
                         <td class="p-4 text-center">
 
-                            {{ $product->name }}
+                            {{ $cartProduct->product->name }}
 
                         </td>
 
                         <td class="p-4 text-center">
 
-                            {{ $product->category->name }}
+                            R$ {{ number_format($cartProduct->product->price, 2, ',', '.') }}
 
                         </td>
 
                         <td class="p-4 text-center">
 
-                            R$ {{ number_format($product->price, 2, ',', '.') }}
-
-                        </td>
-
-                        <td class="p-4 text-center">
-
-                            {{ $product->amount }}
+                            {{ $cartProduct->product->amount }}
 
                         </td>
 
@@ -107,21 +90,14 @@
                             <div class="flex gap-2 justify-center">
 
                                 <a
-                                    href="{{ route('products.show', $product) }}"
+                                    href="{{ route('products.show', $cartProduct->product) }}"
                                     class="bg-green-600 text-white px-4 py-2 rounded"
                                 >
                                     Ver
                                 </a>
 
-                                <a
-                                    href="{{ route('products.edit', $product) }}"
-                                    class="bg-yellow-500 text-white px-4 py-2 rounded"
-                                >
-                                    Editar
-                                </a>
-
                                 <form
-                                    action="{{ route('products.destroy', $product) }}"
+                                    action="{{ route('cartProducts.destroy', $cartProduct) }}"
                                     method="POST"
                                     onsubmit="return confirm('Deseja excluir este produto?')"
                                 >
@@ -168,7 +144,7 @@
 
     <div class="mt-8">
 
-        {{ $products->links() }}
+        {{ $cartProducts->links() }}
 
     </div>
 

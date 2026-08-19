@@ -118,7 +118,6 @@ Route::middleware("auth")->group(function () {
         "destroy",
     ])->name("admins.destroy");
 
-    Route::get("/cart", [ProductsOnCartController::class, "index"])->name("cart.index");
 
     Route::post("/products/{product}/buy", [
         SaleController::class,
@@ -128,6 +127,9 @@ Route::middleware("auth")->group(function () {
     Route::get("/sales/{sale}/return", [SaleController::class, "return"])->name(
         "sales.return",
     );
+
+    Route::get("/cart", [ProductsOnCartController::class, "index"])->name("cart.index");
+    Route::post("/cart/store", [ProductsOnCartController::class, "store"])->name("cart.store");
 });
 
 require __DIR__ . "/auth.php";
