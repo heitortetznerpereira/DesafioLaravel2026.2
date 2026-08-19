@@ -179,33 +179,38 @@ class SaleController extends Controller
             "unit_price" => $product->price,
         ]);
 
-        $response = Http::withToken(
-            config("services.pagbank.token")
-        )->post(
-            config("services.pagbank.url") . "/checkouts",
-            [
-                "reference_id" => "sale-" . $sale->id,
-
-                "items" => [
-                    [
-                        "reference_id" => (string) $sale->id,
-                        "name" => $sale->name,
-                        "quantity" => $sale->amount,
-                        "unit_amount" => (int) round(
-                            $sale->unit_price * 100
-                        ),
+        $response = Http::withHeaders([
+            "Authorization" => "Bearer " . config("services.pagbank.token"),
+            "Content-Type" => "application/json",
+            "Accept" => "application/json",
+        ])->post(config("services.pagbank.url") . "/checkouts", [
+            "reference_id" => "sale-" . $sale->id,
+            "customer" => [
+                "email" => Auth::user()->email,
+            ],
+            "items" => [
+                [
+                    "reference_id" => (string) $sale->id,
+                    "name" => $sale->name,
+                    "quantity" => $sale->amount,
+                    "unit_amount" => (int) round($sale->unit_price * 100),
+                ],
+            ],
+            "charges" => [
+                [
+                    "description" => "Pagamento do produto " . $sale->name,
+                    "amount" => [
+                        "value" => (int) round($sale->unit_price * $sale->amount * 100),
+                        "currency" => "BRL",
                     ],
                 ],
-
-                "redirect_url" => route("sales.return", $sale),
-
-                "return_url" => route("sales.return", $sale),
-
-                "payment_notification_urls" => [
-                    route("pagbank.webhook"),
-                ],
-            ]
-        );
+            ],
+            "redirect_url" => route("sales.return", $sale, true),
+            "return_url" => route("sales.return", $sale, true),
+            "payment_notification_urls" => [
+                url("/pagbank/webhook"),
+            ],
+        ]);
 
         /*
         $response = Http::withToken(config("services.pagbank.token"))->post(
@@ -230,14 +235,9 @@ class SaleController extends Controller
 
         if ($response->failed()) {
             $sale->delete();
-            dd([
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                    'json' => $response->json(),
-                ]);
 
             return back()->withErrors([
-                "payment" => $response->json(),
+                "payment" => "Não foi possível iniciar o pagamento no PagSeguro. Verifique o token e a URL pública do projeto.",
             ]);
         }
 
@@ -251,7 +251,6 @@ class SaleController extends Controller
 
         if (!$payLink) {
             $sale->delete();
-            dd("Erro!");
 
             return back()->withErrors([
                 "payment" => "O PagBank não retornou um link de pagamento.",

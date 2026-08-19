@@ -24,6 +24,10 @@ Route::post("/pagbank/webhook", [PagBankController::class, "webhook"])->name(
     "pagbank.webhook",
 );
 
+Route::get("/sales/{sale}/return", [SaleController::class, "return"])->name(
+    "sales.return",
+);
+
 Route::get("/", [HomeController::class, "index"])->name("home");
 
 Route::middleware("auth")->group(function () {
@@ -123,10 +127,6 @@ Route::middleware("auth")->group(function () {
         SaleController::class,
         "buy",
     ])->name("products.buy");
-
-    Route::get("/sales/{sale}/return", [SaleController::class, "return"])->name(
-        "sales.return",
-    );
 
     Route::get("/cart", [ProductsOnCartController::class, "index"])->name("cart.index");
     Route::post("/cart/store", [ProductsOnCartController::class, "store"])->name("cart.store");

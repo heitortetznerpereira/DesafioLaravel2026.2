@@ -8,6 +8,7 @@ use App\Models\ProductsOnCart;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class ProductsOnCartController extends Controller
 {
@@ -103,6 +104,8 @@ class ProductsOnCartController extends Controller
                 ->with("error", "Seu carrinho está vazio.");
         }
 
+        $sales = [];
+
         foreach ($cartProducts as $cartProduct) {
             $product = $cartProduct->product;
 
@@ -111,18 +114,14 @@ class ProductsOnCartController extends Controller
             }
 
             if ($product->creator_id === Auth::id()) {
-                $cartProduct->delete();
                 continue;
             }
 
             if ($product->amount < $cartProduct->amount) {
-                $cartProduct->delete();
                 continue;
             }
 
-            $product->decrement("amount", $cartProduct->amount);
-
-            Sale::create([
+            $sale = Sale::create([
                 "product_id" => $product->id,
                 "buyer_id" => Auth::id(),
                 "seller_id" => $product->creator_id,
@@ -132,12 +131,91 @@ class ProductsOnCartController extends Controller
                 "amount" => $cartProduct->amount,
                 "unit_price" => $product->price,
             ]);
+
+            $sales[] = $sale;
+        }
+
+        if (empty($sales)) {
+            return redirect()
+                ->route("cart.index")
+                ->with("error", "Não foi possível fechar o carrinho. Verifique os itens disponíveis.");
+        }
+
+        $firstPayLink = null;
+
+        foreach ($sales as $sale) {
+            $response = Http::withHeaders([
+                "Authorization" => "Bearer " . config("services.pagbank.token"),
+                "Content-Type" => "application/json",
+                "Accept" => "application/json",
+            ])->post(config("services.pagbank.url") . "/checkouts", [
+                "reference_id" => "sale-" . $sale->id,
+                "customer" => [
+                    "email" => Auth::user()->email,
+                ],
+                "items" => [[
+                    "reference_id" => (string) $sale->id,
+                    "name" => $sale->name,
+                    "quantity" => $sale->amount,
+                    "unit_amount" => (int) round($sale->unit_price * 100),
+                ]],
+                "charges" => [[
+                    "description" => "Pagamento do produto " . $sale->name,
+                    "amount" => [
+                        "value" => (int) round($sale->unit_price * $sale->amount * 100),
+                        "currency" => "BRL",
+                    ],
+                ]],
+                "redirect_url" => route("sales.return", $sale, true),
+                "return_url" => route("sales.return", $sale, true),
+                "payment_notification_urls" => [
+                    url("/pagbank/webhook"),
+                ],
+            ]);
+
+            if ($response->failed()) {
+                $sale->delete();
+                continue;
+            }
+
+            $checkout = $response->json();
+            $checkoutId = $checkout["id"] ?? null;
+
+            if ($checkoutId) {
+                $existsWithSameCheckout = Sale::where("pagbank_checkout_id", $checkoutId)
+                    ->whereKeyNot($sale->id)
+                    ->exists();
+
+                if ($existsWithSameCheckout) {
+                    $checkoutId = "checkout_" . $sale->id . "_" . now()->timestamp . "_" . random_int(1000, 9999);
+                }
+            }
+
+            $sale->update([
+                "pagbank_checkout_id" => $checkoutId,
+            ]);
+
+            $payLink = collect($checkout["links"] ?? [])->firstWhere("rel", "PAY");
+
+            if ($payLink && !$firstPayLink) {
+                $firstPayLink = $payLink["href"];
+            }
         }
 
         ProductsOnCart::where("user_id", Auth::id())->delete();
 
-        return redirect()
-            ->route("cart.index")
-            ->with("success", "Carrinho fechado com sucesso.");
+        if (!$firstPayLink) {
+            foreach ($sales as $sale) {
+                if ($sale->exists) {
+                    $sale->delete();
+                }
+            }
+
+            return redirect()
+                ->route("cart.index")
+                ->with("error", "Não foi possível iniciar o pagamento no PagSeguro.");
+        }
+
+        return redirect()->away($firstPayLink);
     }
 }
