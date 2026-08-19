@@ -29,13 +29,6 @@
 
     </div>
 
-    @if(Auth::user()->is_admin && !empty($productChartLabels))
-        <div class="bg-white rounded-xl shadow p-6 mb-8">
-            <h2 class="text-xl font-semibold mb-4">Produtos cadastrados</h2>
-            <canvas id="productChart" height="120"></canvas>
-        </div>
-    @endif
-
     @if(session('success'))
 
         <div class="bg-green-100 border border-green-400 text-green-700 p-4 rounded-lg mb-6">
@@ -44,6 +37,15 @@
 
         </div>
 
+    @endif
+
+    @if(Auth::user()->is_admin && !empty($productChartLabels))
+        <div class="bg-white rounded-xl shadow p-4 mb-8 max-w-3xl mx-auto">
+            <h2 class="text-lg font-semibold mb-3 text-center">Produtos cadastrados</h2>
+            <div class="h-52">
+                <canvas id="productChart"></canvas>
+            </div>
+        </div>
     @endif
 
     <div class="overflow-x-auto">
