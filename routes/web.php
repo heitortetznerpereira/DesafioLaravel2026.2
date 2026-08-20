@@ -28,9 +28,9 @@ Route::get("/sales/{sale}/return", [SaleController::class, "return"])->name(
     "sales.return",
 );
 
-Route::get("/", [HomeController::class, "index"])->name("home");
 
 Route::middleware("auth")->group(function () {
+    Route::get("/", [HomeController::class, "index"])->name("home");
     Route::get("/profile", [ProfileController::class, "edit"])->name(
         "profile.edit",
     );
